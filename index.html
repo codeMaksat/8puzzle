@@ -142,12 +142,67 @@
 <script>
     var imageIndex = -1;
     var imgs = document.querySelectorAll('#pics img');
+    var arrImg = [];
+    var index;
 
-    imgs.addEventListener("click", buttonHidden);
+    for (let i = 0; i < imgs.length; i++) {
+        arrImg.push(imgs[i]);
+    }
+
+    for (let i = 0; i < imgs.length; i++) {
+        imgs[i].onclick = function() {
+            buttonHidden();
+            index = arrImg.indexOf(this);
+            $(this).parent().find("img").css("box-shadow", "none");
+            $(this).css({
+                "box-shadow": "0 0 20px rgba(0, 0, 0, 0.5)"
+            }, 300);
+            imageIndex = $(this).index() + 1;
+        }
+    }
 
     function buttonHidden() {
         document.getElementById("buttonHidden").classList.add("button");
     }
+</script>
+
+
+
+<!-- set Image before changing page -->
+<script>
+    var img;
+    var buttonHidd = document.getElementById("buttonHidden");
+
+    buttonHidd.onclick = function() {
+        img = "url(img/" + imageIndex + ".jpg) no-repeat";
+        changePage();
+        createBoard();
+    }
+
+
+
+
+
+
+
+
+    var changePage = function() {
+        $("body > div:first")
+            .fadeOut(500, function() {
+                $(this).next()
+                    .fadeIn(500)
+                    .end()
+                    .appendTo("body")
+                    .hide();
+            });
+    };
+
+
+    // $("#buttonHidden").click(function() {
+    //     img = "url(img/" + imageIndex + ".jpg) no-repeat";
+    //     changePage();
+    //     createBoard();
+    // });
 </script>
 
 </html>
