@@ -153,11 +153,19 @@
         imgs[i].onclick = function() {
             buttonHidden();
             index = arrImg.indexOf(this);
-            $(this).parent().find("img").css("box-shadow", "none");
-            $(this).css({
-                "box-shadow": "0 0 20px rgba(0, 0, 0, 0.5)"
-            }, 300);
+
+            let div = this.parentElement;
+            let imgs = div.querySelectorAll('img');
+
+            for (let i = 0; i < imgs.length; i++) {
+                imgs[i].style.boxShadow = "none";
+            }
+
+            this.style.boxShadow = "0 0 20px rgba(0, 0, 0, 0.5)";
+
             imageIndex = $(this).index() + 1;
+
+            console.log(imageIndex);
         }
     }
 
