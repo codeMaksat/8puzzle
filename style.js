@@ -41,12 +41,12 @@ $(function() {
     // });
 
     //  set Image before changing page
-    var img;
-    $("#buttonHidden").click(function() {
-        img = "url(img/" + imageIndex + ".jpg) no-repeat";
-        changePage();
-        createBoard();
-    });
+    // var img;
+    // $("#buttonHidden").click(function() {
+    //     img = "url(img/" + imageIndex + ".jpg) no-repeat";
+    //     changePage();
+    //     createBoard();
+    // });
 
     // game functions
     //  

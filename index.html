@@ -164,8 +164,6 @@
             this.style.boxShadow = "0 0 20px rgba(0, 0, 0, 0.5)";
 
             imageIndex = $(this).index() + 1;
-
-            console.log(imageIndex);
         }
     }
 
@@ -179,38 +177,33 @@
 <!-- set Image before changing page -->
 <script>
     var img;
-    var buttonHidd = document.getElementById("buttonHidden");
+    var buttonHid = document.getElementById("buttonHidden");
+    var thirdPage = document.querySelectorAll(".main")[2];
 
-    buttonHidd.onclick = function() {
+    buttonHid.onclick = function() {
         img = "url(img/" + imageIndex + ".jpg) no-repeat";
+
+
+        function changePage() {
+            secondPage.style.opacity = 0;
+            setTimeout(hidediv, 1000);
+            thirdPage.style.display = "block";
+            thirdPage.style.opacity = 0;
+            setTimeout(showdiv, 1000);
+        }
+
+        function hidediv() {
+            secondPage.style.display = "none";
+        }
+
+        function showdiv() {
+            thirdPage.style.opacity = "1";
+        }
+
         changePage();
+
         createBoard();
     }
-
-
-
-
-
-
-
-
-    var changePage = function() {
-        $("body > div:first")
-            .fadeOut(500, function() {
-                $(this).next()
-                    .fadeIn(500)
-                    .end()
-                    .appendTo("body")
-                    .hide();
-            });
-    };
-
-
-    // $("#buttonHidden").click(function() {
-    //     img = "url(img/" + imageIndex + ".jpg) no-repeat";
-    //     changePage();
-    //     createBoard();
-    // });
 </script>
 
 
