@@ -44,10 +44,10 @@
     <!-- third page -->
     <div class="main" style="width: 600px; display: none;">
         <div id="game">
-            <ul></ul>
+            <ul id="ul"></ul>
         </div>
         <div id="select">
-            <label>Select Shuffle Amount</label>
+            <label for="shuffle" class="title for-shuffle">Select Shuffle Amount</label>
             <select name="shuffle" id="shuffle" style="display: none;">
 <option selected="" disabled="" value="none">Choose shuffle</option>
 <option value="3">3 moves</option>
@@ -60,9 +60,9 @@
         <p id="solveNow">Solve the puzzle now!<br>
             <span>Press ESC if you want me to solve it</span>
         </p>
-        <div class="backdrop">
-            <h2 id="popup">Congratulations!</h2>
-            <p id="f5">Press F5 to restart</p>
+        <div class="center" id="backdrop">
+            <h2 id="popup" class="center">Congratulations!</h2>
+            <p id="f5" class="center">Press F5 to restart</p>
         </div>
     </div>
 
@@ -181,9 +181,6 @@
     var thirdPage = document.querySelectorAll(".main")[2];
 
     buttonHid.onclick = function() {
-        img = "url(img/" + imageIndex + ".jpg) no-repeat";
-
-
         function changePage() {
             secondPage.style.opacity = 0;
             setTimeout(hidediv, 1000);
@@ -200,9 +197,198 @@
             thirdPage.style.opacity = "1";
         }
 
+        img = "url(img/" + imageIndex + ".jpg) no-repeat";
         changePage();
-
         createBoard();
+    }
+
+    // game functions
+    //  
+    //  initialize the game
+    var tiles = [];
+    var num = 0;
+    const emptyTile = 0;
+    var immovables = [];
+    var movables = [];
+    var solved = false;
+    var shuffleAmount = 0;
+    var moves = [];
+    let madeSteps = false;
+
+    var topMargin = 5;
+    for (var row = 0; row < 3; row++) {
+        var leftMargin = 5;
+        for (var column = 0; column < 3; column++) {
+            tiles.push({
+                btop: -row * 150,
+                bleft: -column * 150,
+                data: num,
+                move: {
+                    left: column * 150 + leftMargin,
+                    top: row * 150 + topMargin,
+                    row: row,
+                    col: column,
+                    current: num++
+                }
+            });
+            leftMargin += 5;
+        }
+        topMargin += 5;
+    }
+
+
+    createBoard = function() {
+        document.getElementsByClassName("ul").innerHTML = "";
+        const div = document.getElementById("ul");
+        for (let i = 1; i < tiles.length; i++) {
+            let li = document.createElement("li");
+            li.id = tiles[i].data;
+            li.style.background = img;
+            li.style.backgroundPosition = tiles[i].bleft + "px " + tiles[i].btop + "px";
+            li.style.top = tiles[i].move.top + "px";
+            li.style.left = +tiles[i].move.left + "px";
+            li.className = "correct";
+            div.appendChild(li);
+            li.onclick = tileClick;
+        }
+        return false;
+    };
+
+
+    let getImmovables = function() {
+        immovables = [];
+        movables = [];
+        let correctTiles = 0;
+        // for (let i = 0; i < tiles.length; i++) {
+        //     console.log("Tile" + i + " data:" + tiles[i].data);
+        // }
+        for (let i = 0; i < tiles.length; i++) {
+            if (Math.abs(tiles[i].move.row - tiles[emptyTile].move.row) + Math.abs(tiles[i].move.col - tiles[emptyTile].move.col) !== 1)
+                immovables.push(tiles[i].data);
+            else
+                movables.push(tiles[i].move.current);
+
+            if (tiles[i].data === tiles[i].move.current)
+                correctTiles++;
+            // console.log("immovables: " + immovables);
+        }
+        solved = correctTiles === 9;
+        if (solved && madeSteps) {
+            let bd = document.getElementById("backdrop");
+            bd.style.display = "block";
+            let top = 300;
+            let font = 0;
+            let id = setInterval(frame, 5);
+
+            function frame() {
+                if (font === 120) {
+                    clearInterval(id);
+                } else {
+                    top--;
+                    font++;
+                    bd.style.top = top + "px";
+                    bd.style.fontSize = font + "px";
+                }
+            }
+        }
+    }
+
+    let isMovable = function(index) {
+        return movables.includes(tiles[index].move.current);
+    }
+
+
+    //  select shuffle
+    document.getElementById('shuffle').addEventListener('change', function(e) {
+        shuffleAmount = Number.parseInt(e.target.value);
+        document.getElementsByClassName("hideButton")[0].style.display = "";
+    });
+
+    let animationComplete = true;
+    let animation = false;
+
+    getImmovables();
+
+    function setClass(index) {
+
+        let li = document.getElementById(index);
+
+        if (tiles[index].data === tiles[index].move.current) {
+
+            li.className = "correct";
+        } else
+            li.className = "incorrect";
+    }
+
+    function changeOpacity(opacity) {
+
+        console.log(immovables);
+        console.log("animation" + animation);
+        for (let i = 0; i < immovables.length; i++) {
+            if (tiles[i].data !== 0 && !solved && animation) {
+                document.getElementById(immovables[tiles[i].data]).style.opacity = opacity;
+            }
+        }
+    }
+
+    function changeFrame() {
+        for (let i = 0; i < tiles.length; i++) {
+            if (tiles[i].data !== 0) {
+                if (tiles[i].data === tiles[i].move.current)
+                    document.getElementById(tiles[i].data).style.border = "3px solid #86e225";
+                else {
+                    document.getElementById(tiles[i].data).style.border = "3px solid #d23535";
+                }
+            }
+        }
+    }
+
+    function tileClick(clicked) {
+        let li = document.getElementById(this.id);
+        if (movables.includes(tiles[this.id].move.current) && !solved && animationComplete) {
+            let top = parseInt(li.style.top || 0, 10);
+            let left = parseInt(li.style.left, 10);
+            let id = setInterval(frame, 3);
+
+            function frame() {
+                if (top === tiles[emptyTile].move.top && left === tiles[emptyTile].move.left) {
+                    clearInterval(id);
+                    let temp = tiles[li.id].move;
+                    tiles[li.id].move = tiles[emptyTile].move;
+                    tiles[emptyTile].move = temp;
+                    setClass(li.id);
+                    changeOpacity(1);
+                    getImmovables();
+                    changeOpacity(0.5);
+                    animationComplete = true;
+                    madeSteps = true;
+
+                } else {
+                    animationComplete = false;
+                    //Check if on the left
+                    if (tiles[emptyTile].move.left > left) {
+                        //Move right
+                        left++;
+                        li.style.left = left + 'px';
+                    } else if (tiles[emptyTile].move.left < left) {
+                        left--;
+                        li.style.left = left + 'px';
+                    }
+
+                    //Check if on top
+                    else if (tiles[emptyTile].move.top > top) {
+                        //Move right
+                        top++;
+                        li.style.top = top + 'px';
+                    } else {
+                        top--;
+                        li.style.top = top + 'px';
+                    }
+
+                }
+                changeFrame();
+            }
+        }
     }
 </script>
 

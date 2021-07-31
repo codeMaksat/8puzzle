@@ -51,75 +51,75 @@ $(function() {
     // game functions
     //  
     //  initialize the game
-    var tiles = [];
-    var num = 0;
-    const emptyTile = 0;
-    var immovables = [];
-    var movables = [];
-    var solved = false;
-    var shuffleAmount = 0;
-    var moves = [];
+    // var tiles = [];
+    // var num = 0;
+    // const emptyTile = 0;
+    // var immovables = [];
+    // var movables = [];
+    // var solved = false;
+    // var shuffleAmount = 0;
+    // var moves = [];
 
-    var topMargin = 5;
-    for (var row = 0; row < 3; row++) {
-        var leftMargin = 5;
-        for (var column = 0; column < 3; column++) {
-            tiles.push({
-                btop: -row * 150,
-                bleft: -column * 150,
-                data: num,
-                move: {
-                    left: column * 150 + leftMargin,
-                    top: row * 150 + topMargin,
-                    row: row,
-                    col: column,
-                    current: num++
-                }
-            });
-            leftMargin += 5;
-        }
-        topMargin += 5;
-    }
+    // var topMargin = 5;
+    // for (var row = 0; row < 3; row++) {
+    //     var leftMargin = 5;
+    //     for (var column = 0; column < 3; column++) {
+    //         tiles.push({
+    //             btop: -row * 150,
+    //             bleft: -column * 150,
+    //             data: num,
+    //             move: {
+    //                 left: column * 150 + leftMargin,
+    //                 top: row * 150 + topMargin,
+    //                 row: row,
+    //                 col: column,
+    //                 current: num++
+    //             }
+    //         });
+    //         leftMargin += 5;
+    //     }
+    //     topMargin += 5;
+    // }
 
-    var createBoard = function() {
-        var ul = $("ul").empty();
+    // var createBoard = function() {
+    //     var ul = $("ul").empty();
 
-        for (var i = 1; i < tiles.length; i++) {
-            var li = $("<li id='" + tiles[i].data + "'>");
-            li.css({
-                "background": img,
-                "background-position": (tiles[i].bleft + "px " + tiles[i].btop + "px"),
-                "top": tiles[i].move.top + "px ",
-                "left": +tiles[i].move.left + "px"
-            });
-            li.addClass("correct");
-            ul.append(li);
-        }
-    };
+    //     for (var i = 1; i < tiles.length; i++) {
+    //         var li = $("<li id='" + tiles[i].data + "'>");
+    //         li.css({
+    //             "background": img,
+    //             "background-position": (tiles[i].bleft + "px " + tiles[i].btop + "px"),
+    //             "top": tiles[i].move.top + "px ",
+    //             "left": +tiles[i].move.left + "px"
+    //         });
+    //         li.addClass("correct");
+    //         ul.append(li);
+    //     }
+    // };
 
-    var getImmovables = function() {
-        immovables = [];
-        movables = [];
-        var correctTiles = 0;
-        for (var i = 0; i < tiles.length; i++) {
-            if (Math.abs(tiles[i].move.row - tiles[emptyTile].move.row) + Math.abs(tiles[i].move.col - tiles[emptyTile].move.col) !== 1)
-                immovables.push(tiles[i].data);
-            else
-                movables.push(tiles[i].move.current);
+    // var getImmovables = function() {
+    //     immovables = [];
+    //     movables = [];
+    //     var correctTiles = 0;
+    //     for (var i = 0; i < tiles.length; i++) {
+    //         if (Math.abs(tiles[i].move.row - tiles[emptyTile].move.row) + Math.abs(tiles[i].move.col - tiles[emptyTile].move.col) !== 1)
+    //             immovables.push(tiles[i].data);
+    //         else
+    //             movables.push(tiles[i].move.current);
 
-            if (tiles[i].data === tiles[i].move.current)
-                correctTiles++;
-        }
+    //         if (tiles[i].data === tiles[i].move.current)
+    //             correctTiles++;
+    //     }
 
-        if (correctTiles === 9)
-            solved = true;
-        else
-            solved = false;
-    };
+    //     if (correctTiles === 9)
+    //         solved = true;
+    //     else
+    //         solved = false;
+    // };
 
-    var isMovable = function(index) {
-        return movables.includes(tiles[index].move.current);
-    };
+    // var isMovable = function(index) {
+    //     return movables.includes(tiles[index].move.current);
+    // };
 
     var changeOpacity = function(opacity) {
         immovables.forEach(function(item) {
@@ -128,7 +128,7 @@ $(function() {
         });
     };
 
-    getImmovables();
+    // getImmovables();
 
     $("#game ul").on("mouseenter", function() {
         if (!solved && !$(this).find("li").is(":animated"))
