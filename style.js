@@ -97,29 +97,29 @@ $(function() {
     //     }
     // };
 
-    // var getImmovables = function() {
-    //     immovables = [];
-    //     movables = [];
-    //     var correctTiles = 0;
-    //     for (var i = 0; i < tiles.length; i++) {
-    //         if (Math.abs(tiles[i].move.row - tiles[emptyTile].move.row) + Math.abs(tiles[i].move.col - tiles[emptyTile].move.col) !== 1)
-    //             immovables.push(tiles[i].data);
-    //         else
-    //             movables.push(tiles[i].move.current);
+    var getImmovables = function() {
+        immovables = [];
+        movables = [];
+        var correctTiles = 0;
+        for (var i = 0; i < tiles.length; i++) {
+            if (Math.abs(tiles[i].move.row - tiles[emptyTile].move.row) + Math.abs(tiles[i].move.col - tiles[emptyTile].move.col) !== 1)
+                immovables.push(tiles[i].data);
+            else
+                movables.push(tiles[i].move.current);
 
-    //         if (tiles[i].data === tiles[i].move.current)
-    //             correctTiles++;
-    //     }
+            if (tiles[i].data === tiles[i].move.current)
+                correctTiles++;
+        }
 
-    //     if (correctTiles === 9)
-    //         solved = true;
-    //     else
-    //         solved = false;
-    // };
+        if (correctTiles === 9)
+            solved = true;
+        else
+            solved = false;
+    };
 
-    // var isMovable = function(index) {
-    //     return movables.includes(tiles[index].move.current);
-    // };
+    var isMovable = function(index) {
+        return movables.includes(tiles[index].move.current);
+    };
 
     var changeOpacity = function(opacity) {
         immovables.forEach(function(item) {

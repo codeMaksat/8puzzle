@@ -236,32 +236,13 @@
         topMargin += 5;
     }
 
-
-    createBoard = function() {
-        document.getElementsByClassName("ul").innerHTML = "";
-        const div = document.getElementById("ul");
-        for (let i = 1; i < tiles.length; i++) {
-            let li = document.createElement("li");
-            li.id = tiles[i].data;
-            li.style.background = img;
-            li.style.backgroundPosition = tiles[i].bleft + "px " + tiles[i].btop + "px";
-            li.style.top = tiles[i].move.top + "px";
-            li.style.left = +tiles[i].move.left + "px";
-            li.className = "correct";
-            div.appendChild(li);
-            li.onclick = tileClick;
-        }
-        return false;
-    };
-
-
     let getImmovables = function() {
         immovables = [];
         movables = [];
         let correctTiles = 0;
-        // for (let i = 0; i < tiles.length; i++) {
-        //     console.log("Tile" + i + " data:" + tiles[i].data);
-        // }
+        for (let i = 0; i < tiles.length; i++) {
+            console.log("Tile" + i + " data:" + tiles[i].data);
+        }
         for (let i = 0; i < tiles.length; i++) {
             if (Math.abs(tiles[i].move.row - tiles[emptyTile].move.row) + Math.abs(tiles[i].move.col - tiles[emptyTile].move.col) !== 1)
                 immovables.push(tiles[i].data);
@@ -286,17 +267,17 @@
                 } else {
                     top--;
                     font++;
-                    bd.style.top = top + "px";
+                    // bd.style.top = top + "px";
                     bd.style.fontSize = font + "px";
                 }
             }
         }
     }
 
+
     let isMovable = function(index) {
         return movables.includes(tiles[index].move.current);
     }
-
 
     //  select shuffle
     document.getElementById('shuffle').addEventListener('change', function(e) {
@@ -304,8 +285,26 @@
         document.getElementsByClassName("hideButton")[0].style.display = "";
     });
 
+
     let animationComplete = true;
     let animation = false;
+
+    createBoard = function() {
+        document.getElementsByClassName("ul").innerHTML = "";
+        const div = document.getElementById("ul");
+        for (let i = 1; i < tiles.length; i++) {
+            let li = document.createElement("li");
+            li.id = tiles[i].data;
+            li.style.background = img;
+            li.style.backgroundPosition = tiles[i].bleft + "px " + tiles[i].btop + "px";
+            li.style.top = tiles[i].move.top + "px";
+            li.style.left = +tiles[i].move.left + "px";
+            li.className = "correct";
+            div.appendChild(li);
+            li.onclick = tileClick;
+        }
+        return false;
+    };
 
     getImmovables();
 
@@ -320,6 +319,89 @@
             li.className = "incorrect";
     }
 
+    async function shuffle() {
+        let num = -1;
+        let c = shuffleAmount;
+        changeOpacity(1);
+        animationComplete = true;
+        let time;
+        if (shuffleAmount === 3) {
+            time = 1;
+        } else {
+            time = 10;
+        }
+
+        while (c > 0) {
+            let rand;
+
+            do {
+                rand = Math.floor(Math.random() * 9);
+
+            } while (num === rand || !isMovable(rand));
+
+            num = rand;
+            if (isMovable(num) && animationComplete) {
+                let li = document.getElementById(num);
+                let top = parseInt(li.style.top || 0, 10);
+                let left = parseInt(li.style.left, 10);
+                let id = setInterval(frame, 3);
+
+                function frame() {
+                    if (top === tiles[emptyTile].move.top && left === tiles[emptyTile].move.left) {
+                        clearInterval(id);
+                        let temp = tiles[li.id].move;
+                        tiles[li.id].move = tiles[emptyTile].move;
+                        tiles[emptyTile].move = temp;
+                        setClass(li.id);
+                        getImmovables();
+                        animationComplete = true;
+                        madeSteps = true;
+
+
+                    } else {
+                        console.log("here");
+                        animationComplete = false;
+                        //Check if on the left
+                        if (tiles[emptyTile].move.left > left) {
+                            //Move right
+                            left++;
+                            li.style.left = left + 'px';
+                        } else if (tiles[emptyTile].move.left < left) {
+                            left--;
+                            li.style.left = left + 'px';
+                        }
+
+                        //Check if on top
+                        else if (tiles[emptyTile].move.top > top) {
+                            //Move right
+                            top++;
+                            li.style.top = top + 'px';
+                        } else {
+                            top--;
+                            li.style.top = top + 'px';
+                        }
+
+                    }
+                    changeFrame();
+                }
+            } else {
+                //changeOpacity(0.5);
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            c--;
+        }
+        animation = true;
+    }
+
+    function play() {
+
+        document.getElementsByClassName("shuffle")[0].style.display = "none";
+        document.getElementsByClassName("for-shuffle")[0].innerHTML = "Solve the puzzle now";
+        document.getElementsByClassName("hideButton")[0].style.display = "none";
+        shuffle();
+        solved = false;
+    }
+
     function changeOpacity(opacity) {
 
         console.log(immovables);
@@ -330,6 +412,10 @@
             }
         }
     }
+
+
+
+
 
     function changeFrame() {
         for (let i = 0; i < tiles.length; i++) {
@@ -388,6 +474,27 @@
                 }
                 changeFrame();
             }
+        }
+    }
+    ////////////////////////////////////
+    ////////////////////////////////
+    ////To restart
+
+    document.onkeydown = fkey;
+
+    function fkey(e) {
+        if (e.keyCode === 116) {
+            e.preventDefault();
+            solved = true;
+            document.getElementById("backdrop").style.display = "none";
+            document.getElementsByClassName("shuffle")[0].style.display = "block";
+            document.getElementsByClassName("for-shuffle")[0].innerHTML = "Choose shuffle";
+            document.getElementsByClassName("hideButton")[0].style.display = "block";
+            showPuzzlePage2();
+            madeSteps = false;
+            animation = false;
+            getImmovables();
+            //changeOpacity(0.5);
         }
     }
 </script>
